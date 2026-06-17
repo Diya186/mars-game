@@ -1,229 +1,303 @@
 /* ============ phaser-scenes.js ============
-   Phaser 3 scenes for:
-   - StarfieldScene  (persistent background stars)
-   - PlanetScene     (rotating Mars on landing page)
-   - CryingScene     (animated crying Mansi on final page)
+   Phaser 3 scenes:
+   - StarfieldScene  (persistent bg)
+   - PlanetScene     (landing page)
+   - CharacterScene  (Mansi + Harsh animated pixel sprites)
+   - CryingScene     (final page)
 */
 
-// ---- STARFIELD (always running in background) ----
+// ---- STARFIELD ----
 class StarfieldScene extends Phaser.Scene {
   constructor() { super({ key: 'StarfieldScene' }); }
-
   create() {
-    const W = this.scale.width;
-    const H = this.scale.height;
+    const W = this.scale.width, H = this.scale.height;
     this.stars = [];
-
-    for (let i = 0; i < 180; i++) {
-      const x = Phaser.Math.Between(0, W);
-      const y = Phaser.Math.Between(0, H);
+    for (let i = 0; i < 200; i++) {
       const size = Phaser.Math.FloatBetween(0.5, 2.5);
-      const alpha = Phaser.Math.FloatBetween(0.1, 0.8);
       const g = this.add.graphics();
-      g.fillStyle(0xffffff, alpha);
-      g.fillCircle(x, y, size);
-      this.stars.push({ g, baseAlpha: alpha, phase: Math.random() * Math.PI * 2 });
+      g.fillStyle(0xffffff, Phaser.Math.FloatBetween(0.2, 0.9));
+      g.fillCircle(
+        Phaser.Math.Between(0, W),
+        Phaser.Math.Between(0, H),
+        size
+      );
+      this.stars.push({ g, phase: Math.random() * Math.PI * 2 });
     }
-
-    // occasional shooting star
-    this.time.addEvent({
-      delay: Phaser.Math.Between(4000, 10000),
-      callback: this.shootingStar,
-      callbackScope: this,
-      loop: true,
-    });
+    this.time.addEvent({ delay: Phaser.Math.Between(3000, 8000), callback: this.shootingStar, callbackScope: this, loop: true });
   }
-
   update(time) {
     this.stars.forEach(s => {
-      const flicker = s.baseAlpha * (0.6 + 0.4 * Math.sin(time / 1200 + s.phase));
-      s.g.setAlpha(flicker);
+      s.g.setAlpha(0.3 + 0.7 * Math.abs(Math.sin(time / 1500 + s.phase)));
     });
   }
-
   shootingStar() {
-    const W = this.scale.width;
-    const H = this.scale.height;
-    const x = Phaser.Math.Between(0, W * 0.6);
-    const y = Phaser.Math.Between(0, H * 0.4);
+    const x = Phaser.Math.Between(0, this.scale.width * 0.7);
+    const y = Phaser.Math.Between(0, this.scale.height * 0.4);
     const line = this.add.graphics();
     line.lineStyle(1.5, 0xffffff, 0.9);
-    line.beginPath();
-    line.moveTo(x, y);
-    line.lineTo(x + 80, y + 40);
-    line.strokePath();
-    this.tweens.add({
-      targets: line,
-      alpha: 0,
-      x: 120,
-      duration: 600,
-      ease: 'Quad.easeOut',
-      onComplete: () => line.destroy(),
-    });
+    line.beginPath(); line.moveTo(x, y); line.lineTo(x + 90, y + 45); line.strokePath();
+    this.tweens.add({ targets: line, alpha: 0, x: 100, duration: 500, ease: 'Quad.easeOut', onComplete: () => line.destroy() });
   }
 }
 
 // ---- PLANET SCENE ----
 class PlanetScene extends Phaser.Scene {
   constructor() { super({ key: 'PlanetScene' }); }
-
+  preload() {}
   create() {
     const cx = 110, cy = 110, r = 90;
-
-    // glow
-    const glow = this.add.graphics();
-    for (let i = 30; i > 0; i--) {
-      glow.fillStyle(0xc0392b, i / 300);
-      glow.fillCircle(cx, cy, r + i * 1.5);
+    // glow rings
+    for (let i = 25; i > 0; i--) {
+      const g = this.add.graphics();
+      g.fillStyle(0xc0392b, i / 280);
+      g.fillCircle(cx, cy, r + i * 1.6);
     }
-
-    // planet body gradient (concentric circles approximation)
+    // planet body
     const planet = this.add.graphics();
-    const colors = [0xe8623a, 0xd4522a, 0xc0392b, 0xa02020, 0x7b1a0a, 0x3d0a04];
-    colors.forEach((col, i) => {
+    [[0xe8623a,r],[0xd4522a,r-10],[0xc0392b,r-22],[0xa02020,r-38],[0x7b1a0a,r-56],[0x3d0a04,r-72]].forEach(([col, rad]) => {
       planet.fillStyle(col, 1);
-      planet.fillCircle(cx - 10 + i * 2, cy - 10 + i * 2, r - i * 12);
+      planet.fillCircle(cx - (r-rad)*0.15, cy - (r-rad)*0.15, rad);
     });
-
-    // dark side shadow
-    const shadow = this.add.graphics();
-    shadow.fillStyle(0x000000, 0.35);
-    shadow.fillEllipse(cx + 25, cy + 20, r * 1.4, r * 1.6);
-
+    // shadow
+    planet.fillStyle(0x000000, 0.32);
+    planet.fillEllipse(cx + 28, cy + 22, r * 1.3, r * 1.5);
     // craters
-    const craters = [
-      { x: cx - 30, y: cy - 20, r: 12 },
-      { x: cx + 20, y: cy + 25, r: 8 },
-      { x: cx - 10, y: cy + 35, r: 6 },
-      { x: cx + 35, y: cy - 15, r: 5 },
-    ];
-    craters.forEach(c => {
-      planet.fillStyle(0x000000, 0.18);
-      planet.fillCircle(c.x, c.y, c.r);
+    [[cx-32,cy-18,11],[cx+22,cy+28,7],[cx-8,cy+38,5],[cx+38,cy-12,5]].forEach(([x,y,r2]) => {
+      planet.fillStyle(0x000000, 0.2);
+      planet.fillCircle(x, y, r2);
     });
-
     // highlight
     const hl = this.add.graphics();
-    hl.fillStyle(0xffa070, 0.22);
-    hl.fillEllipse(cx - 28, cy - 28, 45, 35);
-
-    // atmosphere ring
+    hl.fillStyle(0xffa070, 0.2);
+    hl.fillEllipse(cx - 30, cy - 30, 48, 36);
+    // atmosphere
     const atmo = this.add.graphics();
-    atmo.lineStyle(3, 0xff6030, 0.12);
-    atmo.strokeCircle(cx, cy, r + 4);
+    atmo.lineStyle(3, 0xff6030, 0.1);
+    atmo.strokeCircle(cx, cy, r + 5);
+    // orbiting moon
+    const moon = this.add.graphics();
+    moon.fillStyle(0xaabbcc, 0.75);
+    moon.fillCircle(0, 0, 4);
+    let angle = 0;
+    this.time.addEvent({ delay: 16, loop: true, callback: () => {
+      angle += 0.018;
+      moon.setPosition(cx + Math.cos(angle) * (r + 24), cy + Math.sin(angle) * (r + 24) * 0.4);
+    }});
+    // pulse glow
+    const glowG = this.add.graphics();
+    glowG.fillStyle(0xc0392b, 0.08);
+    glowG.fillCircle(cx, cy, r + 20);
+    this.tweens.add({ targets: glowG, alpha: { from: 0.5, to: 1 }, duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+  }
+}
 
-    // slow rotation shimmer via tween on glow alpha
+// ---- CHARACTER SCENE ----
+class CharacterScene extends Phaser.Scene {
+  constructor() { super({ key: 'CharacterScene' }); }
+
+  preload() {
+    this.load.image('mansi', 'assets/images/mansi.png');
+    this.load.image('harsh', 'assets/images/harsh.png');
+  }
+
+  create() {
+    const W = this.scale.width;
+    const H = this.scale.height;
+
+    // MANSI — bottom right
+    this.mansiSprite = this.add.image(W - 60, H - 10, 'mansi');
+    this.mansiSprite.setOrigin(0.5, 1);
+    this.mansiSprite.setScale(0.32);
+    this.mansiSprite.setAlpha(0);
+
+    // HARSH — further right, hidden initially
+    this.harshSprite = this.add.image(W + 80, H - 10, 'harsh');
+    this.harshSprite.setOrigin(0.5, 1);
+    this.harshSprite.setScale(0.28);
+    this.harshSprite.setAlpha(0);
+
+    // float Mansi in
     this.tweens.add({
-      targets: glow,
-      alpha: { from: 0.7, to: 1 },
-      duration: 2500,
+      targets: this.mansiSprite,
+      alpha: 1,
+      y: H - 10,
+      duration: 600,
+      ease: 'Back.easeOut',
+    });
+
+    // idle float loop for Mansi
+    this.mansiFloat = this.tweens.add({
+      targets: this.mansiSprite,
+      y: { from: H - 10, to: H - 22 },
+      duration: 2200,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
 
-    // tiny orbiting dot (moon-ish)
-    const moon = this.add.graphics();
-    moon.fillStyle(0xaabbcc, 0.7);
-    moon.fillCircle(0, 0, 4);
+    // expose animation functions globally
+    window.animateMansi = (type) => this.playMansiAnim(type);
+    window.showHarshChar = () => this.showHarsh();
+    window.hideChars = () => { this.mansiSprite.setAlpha(0); this.harshSprite.setAlpha(0); };
+    window.showCryingMansi = () => this.playCryAnim();
+  }
 
-    let angle = 0;
-    this.time.addEvent({
-      delay: 16,
-      loop: true,
-      callback: () => {
-        angle += 0.02;
-        moon.setPosition(cx + Math.cos(angle) * (r + 22), cy + Math.sin(angle) * (r + 22) * 0.4);
+  playMansiAnim(type) {
+    const H = this.scale.height;
+    const sprite = this.mansiSprite;
+    // stop idle float temporarily
+    if (this.mansiFloat) this.mansiFloat.pause();
+
+    if (type === 'bounce') {
+      this.tweens.add({
+        targets: sprite,
+        y: { from: H - 10, to: H - 60 },
+        scaleY: { from: 0.32, to: 0.35 },
+        duration: 200,
+        yoyo: true,
+        repeat: 2,
+        ease: 'Quad.easeOut',
+        onComplete: () => { sprite.setScale(0.32); this.mansiFloat && this.mansiFloat.resume(); },
+      });
+    } else if (type === 'shake') {
+      this.tweens.add({
+        targets: sprite,
+        x: { from: this.scale.width - 60, to: this.scale.width - 45 },
+        duration: 60,
+        yoyo: true,
+        repeat: 5,
+        ease: 'Sine.easeInOut',
+        onComplete: () => { sprite.setX(this.scale.width - 60); this.mansiFloat && this.mansiFloat.resume(); },
+      });
+    } else if (type === 'spin') {
+      this.tweens.add({
+        targets: sprite,
+        angle: { from: 0, to: 360 },
+        y: { from: H - 10, to: H - 80 },
+        scale: { from: 0.32, to: 0.38 },
+        duration: 600,
+        ease: 'Back.easeOut',
+        onComplete: () => {
+          sprite.setAngle(0);
+          sprite.setScale(0.32);
+          sprite.setY(H - 10);
+          this.mansiFloat && this.mansiFloat.resume();
+        },
+      });
+    }
+  }
+
+  showHarsh() {
+    const H = this.scale.height;
+    const W = this.scale.width;
+    this.harshSprite.setX(W + 80);
+    this.tweens.add({
+      targets: this.harshSprite,
+      x: W - 130,
+      alpha: 1,
+      duration: 500,
+      ease: 'Back.easeOut',
+    });
+    // idle float for Harsh
+    this.tweens.add({
+      targets: this.harshSprite,
+      y: { from: H - 10, to: H - 20 },
+      duration: 2000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+    // hide after 5s
+    setTimeout(() => {
+      this.tweens.add({
+        targets: this.harshSprite,
+        x: W + 100,
+        alpha: 0,
+        duration: 500,
+        ease: 'Quad.easeIn',
+      });
+    }, 5000);
+  }
+
+  playCryAnim() {
+    const sprite = this.mansiSprite;
+    if (this.mansiFloat) this.mansiFloat.stop();
+    // droop down sadly
+    this.tweens.add({
+      targets: sprite,
+      y: this.scale.height + 20,
+      alpha: 0,
+      duration: 800,
+      ease: 'Quad.easeIn',
+      onComplete: () => {
+        // bring back crying version
+        sprite.setY(this.scale.height - 10);
+        this.tweens.add({
+          targets: sprite,
+          alpha: 1,
+          duration: 400,
+          ease: 'Quad.easeOut',
+        });
+        // shake cry loop
+        this.tweens.add({
+          targets: sprite,
+          angle: { from: -5, to: 5 },
+          duration: 200,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
       },
     });
   }
 }
 
-// ---- CRYING SCENE ----
+// ---- CRYING OVERLAY SCENE ----
 class CryingScene extends Phaser.Scene {
   constructor() { super({ key: 'CryingScene' }); }
-
+  preload() { this.load.image('mansi', 'assets/images/mansi.png'); }
   create() {
-    const cx = 100, cy = 70;
+    const cx = 100, cy = 150;
+    const sprite = this.add.image(cx, cy, 'mansi');
+    sprite.setScale(0.22);
+    sprite.setOrigin(0.5, 1);
 
-    // Head (circle)
-    const head = this.add.graphics();
-    head.fillStyle(0xf5cba7, 1);
-    head.fillCircle(cx, cy, 38);
-
-    // Hair (dark)
-    head.fillStyle(0x1a0a00, 1);
-    head.fillEllipse(cx, cy - 28, 82, 42);
-    // curly hair hint
-    for (let i = -3; i <= 3; i++) {
-      head.fillCircle(cx + i * 10, cy - 38 + Math.abs(i) * 3, 8);
-    }
-
-    // Eyes — sad / squinting
-    const eyes = this.add.graphics();
-    this.drawSadEyes(eyes, cx, cy);
-
-    // Tears
-    this.tears = [];
-    for (let i = 0; i < 4; i++) {
-      const t = this.add.graphics();
-      t.fillStyle(0x5dade2, 0.85);
-      t.fillEllipse(0, 0, 6, 10);
-      const side = i % 2 === 0 ? -1 : 1;
-      t.setPosition(cx + side * 18, cy + 15);
-      this.tears.push({ g: t, side, offset: i * 0.3 });
-    }
-
-    // Body (black dress hint)
-    const body = this.add.graphics();
-    body.fillStyle(0x111111, 1);
-    body.fillTriangle(cx - 30, cy + 38, cx + 30, cy + 38, cx - 40, cy + 110);
-    body.fillTriangle(cx - 30, cy + 38, cx + 30, cy + 38, cx + 40, cy + 110);
-
-    // Mouth — sad curve
-    const mouth = this.add.graphics();
-    mouth.lineStyle(3, 0x8B5E3C, 1);
-    mouth.beginPath();
-    mouth.arc(cx, cy + 22, 14, Phaser.Math.DegToRad(200), Phaser.Math.DegToRad(340));
-    mouth.strokePath();
-
-    // Shake animation
-    this.shakeTween = this.tweens.add({
-      targets: [head, eyes, mouth, body],
-      x: { from: -3, to: 3 },
+    // shake
+    this.tweens.add({
+      targets: sprite,
+      angle: { from: -6, to: 6 },
       duration: 180,
       yoyo: true,
       repeat: -1,
-      ease: 'Sine.easeInOut',
     });
 
-    this.time = 0;
-  }
-
-  drawSadEyes(g, cx, cy) {
-    // sad eyebrows
-    g.lineStyle(3, 0x1a0a00, 1);
-    g.beginPath(); g.moveTo(cx - 22, cy - 14); g.lineTo(cx - 8, cy - 10); g.strokePath();
-    g.beginPath(); g.moveTo(cx + 22, cy - 14); g.lineTo(cx + 8, cy - 10); g.strokePath();
-    // eyes (closed sad lines)
-    g.lineStyle(2.5, 0x333333, 1);
-    g.beginPath(); g.arc(cx - 14, cy - 2, 7, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(180)); g.strokePath();
-    g.beginPath(); g.arc(cx + 14, cy - 2, 7, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(180)); g.strokePath();
-  }
-
-  update(time) {
-    // animate tears falling
-    this.tears.forEach(t => {
-      const cycle = ((time / 800 + t.offset) % 1);
-      t.g.setPosition(t.g.x, 85 + cycle * 60);
-      t.g.setAlpha(cycle < 0.8 ? 1 : 1 - (cycle - 0.8) / 0.2);
+    // animated tears (blue circles falling)
+    this.time.addEvent({
+      delay: 300,
+      loop: true,
+      callback: () => {
+        [-18, 18].forEach(xOff => {
+          const tear = this.add.graphics();
+          tear.fillStyle(0x5dade2, 0.9);
+          tear.fillEllipse(0, 0, 7, 11);
+          tear.setPosition(cx + xOff, cy - 110);
+          this.tweens.add({
+            targets: tear,
+            y: cy - 70,
+            alpha: 0,
+            duration: 600,
+            ease: 'Quad.easeIn',
+            onComplete: () => tear.destroy(),
+          });
+        });
+      },
     });
   }
 }
 
-// ---- BOOT: create all Phaser games ----
+// ---- INIT ----
 function initPhaser() {
-  // Background starfield (full page)
+  // starfield background
   new Phaser.Game({
     type: Phaser.AUTO,
     width: window.innerWidth,
@@ -235,11 +309,10 @@ function initPhaser() {
     audio: { noAudio: true },
   });
 
-  // Mars planet on landing page
-  window.planetGame = new Phaser.Game({
+  // planet on landing
+  new Phaser.Game({
     type: Phaser.AUTO,
-    width: 220,
-    height: 220,
+    width: 220, height: 220,
     transparent: true,
     parent: 'phaser-planet',
     scene: [PlanetScene],
@@ -247,16 +320,30 @@ function initPhaser() {
   });
 }
 
-// Crying scene is created on demand
-function initCryingScene() {
-  const container = document.getElementById('cryingScene');
+// character game initialized when phase 4 starts
+function initCharacterScene() {
+  const container = document.getElementById('charCanvas');
   if (!container || container.dataset.init) return;
   container.dataset.init = '1';
 
   new Phaser.Game({
     type: Phaser.AUTO,
-    width: 200,
-    height: 160,
+    width: 280,
+    height: window.innerHeight,
+    transparent: true,
+    parent: 'charCanvas',
+    scene: [CharacterScene],
+    audio: { noAudio: true },
+  });
+}
+
+function initCryingScene() {
+  const container = document.getElementById('cryingScene');
+  if (!container || container.dataset.init) return;
+  container.dataset.init = '1';
+  new Phaser.Game({
+    type: Phaser.AUTO,
+    width: 200, height: 160,
     transparent: true,
     parent: 'cryingScene',
     scene: [CryingScene],
