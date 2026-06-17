@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mars Colonization Authority</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/phases.css" />
+  <link rel="stylesheet" href="css/game.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- STAR CANVAS (Phaser) -->
+  <div id="star-canvas"></div>
+
+  <!-- NEWS TICKER -->
+  <div class="ticker" id="ticker">
+    <span class="ticker-inner">
+      🚀 BREAKING: Mars land prices surge 2000% — economists baffled &nbsp;&nbsp;&nbsp;
+      📡 MCA reports record applications from Earth entrepreneurs &nbsp;&nbsp;&nbsp;
+      💰 Martian Credit recognized by 0 Earth banks &nbsp;&nbsp;&nbsp;
+      👽 Alien residents file complaint — dismissed &nbsp;&nbsp;&nbsp;
+      🔴 Mars dust storm: "It's fine," says MCA CEO &nbsp;&nbsp;&nbsp;
+      📈 Reliance Mars announces rocket transfer service &nbsp;&nbsp;&nbsp;
+      🏆 Forbes Mars: One entrepreneur owns everything &nbsp;&nbsp;&nbsp;
+    </span>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- FORBES BANNER -->
+  <div class="forbes-banner" id="forbesBanner">📰 FORBES MARS — MANSI HARSH RANKED #1 MARTIAN BILLIONAIRE</div>
+
+  <!-- ===== PHASE 1: LANDING ===== -->
+  <div class="phase active" id="phase1">
+    <div class="mca-logo">MCA</div>
+    <h1 class="mca-title">Mars Colonization Authority</h1>
+    <p class="mca-subtitle">Building Humanity's Future Beyond Earth</p>
+    <div id="phaser-planet"></div>
+    <div class="divider"></div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num">142M km²</div><div class="stat-label">Available Land</div></div>
+      <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">Human Residents</div></div>
+      <div class="stat-box"><div class="stat-num">∞</div><div class="stat-label">Opportunity</div></div>
+    </div>
+    <button class="btn-primary" onclick="goPhase(2)">Begin Registration Process</button>
+    <p class="footer-note">MCA-2026 • All Mars Rights Reserved • Earth Application Portal</p>
+  </div>
+
+  <!-- ===== PHASE 2: APPLICATION ===== -->
+  <div class="phase" id="phase2">
+    <div class="form-container">
+      <div class="section-eyebrow">Official Application</div>
+      <div class="form-title">Martian Entrepreneur Registration</div>
+      <div class="form-subtitle">Form MCA-7B • Intergalactic Business License</div>
+
+      <div class="field-group">
+        <label class="field-label">Applicant Full Name</label>
+        <input class="field-input" id="applicantName" placeholder="Enter your full name..." maxlength="40" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Intended Occupation on Mars</label>
+        <div class="radio-group">
+          <div class="radio-option" onclick="selectOption(this,'occupation')"><div class="radio-dot"></div><span class="radio-emoji">🧑‍🚀</span><span>Astronaut</span></div>
+          <div class="radio-option" onclick="selectOption(this,'occupation')"><div class="radio-dot"></div><span class="radio-emoji">🔬</span><span>Scientist</span></div>
+          <div class="radio-option" onclick="selectOption(this,'occupation')"><div class="radio-dot"></div><span class="radio-emoji">💰</span><span>Martian Billionaire</span></div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Business Model</label>
+        <div class="radio-group">
+          <div class="radio-option" onclick="selectOption(this,'biz')"><div class="radio-dot"></div><span class="radio-emoji">🔭</span><span>Scientific Research</span></div>
+          <div class="radio-option" onclick="selectOption(this,'biz')"><div class="radio-dot"></div><span class="radio-emoji">🚀</span><span>Space Exploration</span></div>
+          <div class="radio-option" onclick="selectOption(this,'biz')"><div class="radio-dot"></div><span class="radio-emoji">🏠</span><span>Buy Mars. Sell Mars. Repeat.</span></div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Funding Strategy</label>
+        <div class="radio-group">
+          <div class="radio-option" onclick="selectOption(this,'fund')"><div class="radio-dot"></div><span class="radio-emoji">🏦</span><span>Traditional Investment</span></div>
+          <div class="radio-option" onclick="selectOption(this,'fund')"><div class="radio-dot"></div><span class="radio-emoji">💸</span><span>Crowdfunding</span></div>
+          <div class="radio-option" onclick="selectOption(this,'fund')"><div class="radio-dot"></div><span class="radio-emoji">🤝</span><span>Ask Ambani — give him 1% land + rocket permit</span></div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Maximum Land You Will Sell</label>
+        <div class="radio-group">
+          <div class="radio-option" onclick="selectOption(this,'sell')"><div class="radio-dot"></div><span class="radio-emoji">💯</span><span>All of it. Max profit.</span></div>
+          <div class="radio-option" onclick="selectOption(this,'sell')"><div class="radio-dot"></div><span class="radio-emoji">📊</span><span>51%. Keep bare majority.</span></div>
+          <div class="radio-option" onclick="selectOption(this,'sell')"><div class="radio-dot"></div><span class="radio-emoji">🔒</span><span>49% only. I keep majority. Always. Non-negotiable.</span></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="submitApplication()">Submit Application →</button>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 3: APPROVAL ===== -->
+  <div class="phase" id="phase3">
+    <div id="checkScreen">
+      <div class="section-eyebrow" style="text-align:center;">Processing Application</div>
+      <div class="big-label" style="text-align:center;">SYSTEM REVIEW IN PROGRESS</div>
+      <div class="check-list" id="checkList">
+        <div class="check-item" id="c1"><span class="check-icon">⏳</span><span>Financial Review — Checking Ambani's availability...</span></div>
+        <div class="check-item" id="c2"><span class="check-icon">⏳</span><span>Leadership Assessment — Evaluating CEO potential...</span></div>
+        <div class="check-item" id="c3"><span class="check-icon">⏳</span><span>Visionary Thinking — Reviewing business model...</span></div>
+        <div class="check-item" id="c4"><span class="check-icon">⏳</span><span>Power Structure — Confirming 49% cap protocol...</span></div>
+        <div class="check-item" id="c5"><span class="check-icon">⏳</span><span>Realistic Expectations — Running diagnostics...</span></div>
+      </div>
+      <div class="loading-bar-container"><div class="loading-bar-fill" id="loadingBar"></div></div>
+    </div>
+
+    <div class="certificate" id="certificate">
+      <div class="cert-header">MARS COLONIZATION AUTHORITY • OFFICIAL CERTIFICATE</div>
+      <div class="cert-title">Certificate of Planetary Ownership</div>
+      <div class="divider"></div>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">This certifies that</p>
+      <div class="cert-name" id="certName">—</div>
+      <div class="cert-body">
+        After rigorous review of her proposal, extraordinary vision, and frankly unmatched ambition —
+        the Mars Colonization Authority is pleased to grant ownership of<br><br>
+        <span style="font-family:'Orbitron',sans-serif;font-size:22px;color:var(--mars-red);font-weight:700;">1% OF MARS</span><br><br>
+        with full rights to expand, develop, tax, permit rocket landings,
+        and market remaining land to Earth's elite (49% cap strictly enforced).
+      </div>
+      <div class="cert-seal">MCA</div>
+      <div class="ambani-section">
+        <strong style="color:var(--mars-gold);">🤝 Investor Confirmed:</strong> Mukesh Ambani has agreed to fund operations in exchange for 1% Martian land + exclusive Reliance rocket transfer rights. He says: <em style="color:var(--text-primary);">"This is... a creative proposal."</em>
+      </div>
+      <div class="divider"></div>
+      <div class="wealth-display">STARTING WEALTH: 100 ₘ MARTIAN CREDITS</div>
+      <div style="margin-top:20px;">
+        <button class="btn-primary" id="startEmpireBtn">Start Empire →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 4: GAME ===== -->
+  <div class="phase" id="phase4">
+    <div class="game-wrapper">
+      <div class="game-header">
+        <div>
+          <div class="game-title-bar">MCA EMPIRE DASHBOARD</div>
+          <div class="game-subtitle">CEO: <span id="ceoName">MANSI HARSH</span> • FOUNDER'S LOCK ACTIVE 🔒</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="wealth-counter" id="wealthDisplay">ₘ 100</div>
+          <div class="income-rate" id="incomeDisplay">+0/sec</div>
+        </div>
+      </div>
+
+      <div class="ownership-bar-container">
+        <div class="ownership-label">
+          <span>MARS OWNERSHIP</span>
+          <span id="ownershipPct">1%</span>
+        </div>
+        <div class="ownership-bar">
+          <div class="ownership-fill" id="ownershipFill" style="width:1%;"></div>
+        </div>
+      </div>
+
+      <div class="game-grid" id="propertyGrid"></div>
+
+      <div class="founder-note">
+        🔒 <strong>FOUNDER'S LOCK:</strong> You may only sell 49% of properties. You keep majority. Always. Investors are frustrated. You don't care.
+      </div>
+    </div>
+
+    <!-- Mansi character -->
+    <div class="character-container" id="mansiChar">
+      <div class="character-bubble" id="mansiBubble">I am going to be the richest person on Mars 🚀</div>
+      <img src="assets/images/photo.jpg" class="character-img mansi-img" alt="Mansi" />
+    </div>
+
+    <!-- Harsh character -->
+    <div class="harsh-popup" id="harshPopup">
+      <div class="harsh-bubble">Wait I'm coming to Mars too 😭</div>
+      <img src="assets/images/photo.jpg" class="harsh-img" alt="Harsh" />
+    </div>
+  </div>
+
+  <!-- ===== PHASE 5: ENDGAME ===== -->
+  <div class="phase" id="phase5">
+    <div class="confetti-container" id="confetti"></div>
+    <div class="section-eyebrow">EMPIRE STATUS: COMPLETE</div>
+    <div class="end-big">100%</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:3px;color:var(--text-dim);margin-bottom:20px;">MARS OWNERSHIP</div>
+    <div class="divider"></div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:clamp(14px,3vw,22px);color:var(--mars-gold);margin:20px 0;letter-spacing:2px;">NET WORTH</div>
+    <div class="final-wealth" id="finalWealth">ₘ 0</div>
+    <div class="forbes-card">
+      <div class="forbes-card-header">📰 FORBES MARS — FINAL EDITION</div>
+      <div class="forbes-card-body">
+        <strong id="forbesName">Mansi Harsh</strong>, founder and sole owner of the Martian economy,
+        has officially acquired 100% of Mars — maintaining her 49% public cap until the bitter end,
+        when she simply bought the rest anyway. Mukesh Ambani's Reliance Mars rockets are running at full capacity.<br><br>
+        <em style="color:var(--mars-gold);">"Exactly as predicted."</em> — CEO
+      </div>
+    </div>
+    <button class="btn-primary" onclick="goPhase(6)">Claim Victory →</button>
+  </div>
+
+  <!-- ===== PHASE 6: REALITY CHECK ===== -->
+  <div class="phase" id="phase6">
+    <div id="realityLoading">
+      <div class="section-eyebrow">System Process</div>
+      <div class="big-label">Performing Reality Check...</div>
+      <div class="loading-dots"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+      <div class="reality-status" id="realityStatus">Loading...</div>
+      <div class="loading-bar-container" style="width:400px;max-width:90vw;">
+        <div class="loading-bar-fill" id="realityBar" style="width:0%;"></div>
+      </div>
+    </div>
+
+    <div class="error-box" id="errorBox">
+      <div class="error-code">ERR</div>
+      <div class="error-msg">HUMANS CANNOT LIVE ON MARS</div>
+      <div class="divider"></div>
+      <div class="crying-scene" id="cryingScene">
+        <!-- Phaser crying animation renders here -->
+      </div>
+      <div class="error-detail">
+        After carefully reviewing your empire, the Ambani investment, the rocket permits,
+        the 49% founder's lock, the Forbes cover, and every property from Tiny Crater to Olympus Mons —
+      </div>
+      <div class="error-punchline">Unfortunately, it's not possible :(</div>
+      <div class="error-footer">
+        Mars has no breathable atmosphere, temperatures of -60°C, deadly radiation, and zero Starbucks locations.<br><br>
+        <span style="color:var(--mars-gold);">Your business plan was, however, flawless.</span><br><br>
+        <em>The same conclusion you reached in your living room —<br>now achieved with a full corporate simulation.</em><br><br>
+        Made with 💖 by Diya
+      </div>
+      <button class="btn-primary" onclick="location.reload()">Try Again (same result)</button>
+    </div>
+  </div>
+
+  <!-- EVENT POPUP -->
+  <div class="event-overlay" id="eventOverlay">
+    <div class="event-card">
+      <span class="event-emoji" id="eventEmoji">🚀</span>
+      <div class="event-headline" id="eventHeadline">BREAKING NEWS</div>
+      <div class="event-body" id="eventBody"></div>
+      <div class="event-reward" id="eventReward"></div>
+      <div class="event-choices" id="eventChoices"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.min.js"></script>
+  <script src="js/sounds.js"></script>
+  <script src="js/phaser-scenes.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

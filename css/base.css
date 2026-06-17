@@ -1,0 +1,198 @@
+/* ============ BASE.CSS ============ */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap');
+
+:root {
+  --mars-red: #c0392b;
+  --mars-orange: #e67e22;
+  --mars-gold: #f39c12;
+  --deep-space: #04050a;
+  --space-dark: #0a0d1a;
+  --space-mid: #121829;
+  --space-light: #1e2a45;
+  --text-primary: #e8eaf0;
+  --text-dim: #8892a4;
+  --accent: #ff4d2e;
+  --green-ok: #2ecc71;
+  --red-err: #e74c3c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--deep-space);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#star-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* PHASES */
+.phase {
+  display: none;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+.phase.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* TICKER */
+.ticker {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(192,57,43,0.12);
+  border-top: 1px solid rgba(192,57,43,0.25);
+  padding: 8px 0;
+  overflow: hidden;
+  z-index: 200;
+}
+.ticker-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-ticker 40s linear infinite;
+  font-size: 12px;
+  color: var(--mars-gold);
+  letter-spacing: 1px;
+}
+@keyframes scroll-ticker {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  top: 20px; right: 20px;
+  background: var(--space-mid);
+  border-left: 3px solid var(--mars-gold);
+  padding: 14px 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+  z-index: 600;
+  transform: translateX(200%);
+  transition: transform 0.3s ease;
+  max-width: 280px;
+}
+.toast.show { transform: translateX(0); }
+
+/* FORBES BANNER */
+.forbes-banner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: linear-gradient(135deg, #7b0000, #c0392b);
+  text-align: center;
+  padding: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--mars-gold);
+  z-index: 500;
+  transform: translateY(-100%);
+  transition: transform 0.5s ease;
+}
+.forbes-banner.show { transform: translateY(0); }
+
+/* DIVIDER */
+.divider {
+  width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--mars-gold), transparent);
+  margin: 24px auto;
+}
+
+/* SHARED TYPOGRAPHY */
+.section-eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--mars-red);
+  font-family: 'Orbitron', sans-serif;
+  margin-bottom: 12px;
+}
+.big-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(16px, 4vw, 26px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.sub-text {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+
+/* BUTTON */
+.btn-primary {
+  background: linear-gradient(135deg, var(--mars-red), #7b0000);
+  border: 1px solid var(--mars-gold);
+  color: var(--mars-gold);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 16px 40px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(243,156,18,0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.btn-primary:hover::before { transform: translateX(100%); }
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(192,57,43,0.5);
+  transform: translateY(-2px);
+}
+
+/* LOADING BAR */
+.loading-bar-container {
+  width: 320px;
+  max-width: 90vw;
+  height: 4px;
+  background: var(--space-light);
+  margin: 20px auto;
+  overflow: hidden;
+}
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mars-red), var(--mars-gold));
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+/* FOOTER */
+.footer-note {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 20px;
+  letter-spacing: 1px;
+}

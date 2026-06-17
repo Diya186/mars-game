@@ -1,0 +1,88 @@
+/* ============ ANIMATIONS.CSS ============ */
+
+/* Phaser canvas sits behind everything */
+canvas { display: block; }
+
+/* planet container from Phaser */
+#phaser-planet {
+  width: 220px; height: 220px;
+  margin: 0 auto 30px;
+}
+
+/* crying animation (fallback if Phaser not ready) */
+.cry-emoji {
+  font-size: 80px;
+  display: inline-block;
+  animation: cry-shake 0.5s ease-in-out infinite;
+}
+@keyframes cry-shake {
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50%       { transform: rotate(4deg) translateY(-6px); }
+}
+
+.tear {
+  display: inline-block;
+  font-size: 28px;
+  animation: tear-fall 1.2s ease-in infinite;
+}
+.tear:nth-child(2) { animation-delay: 0.4s; }
+.tear:nth-child(3) { animation-delay: 0.8s; }
+@keyframes tear-fall {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(36px); opacity: 0; }
+}
+
+/* Rocket launch animation */
+.rocket-launch {
+  display: inline-block;
+  animation: rocket-up 1.5s ease-in forwards;
+  font-size: 40px;
+}
+@keyframes rocket-up {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-200px) scale(0.3); opacity: 0; }
+}
+
+/* Money pop */
+.money-pop {
+  position: fixed;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  color: var(--green-ok);
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 700;
+  animation: money-float 1.2s ease-out forwards;
+}
+@keyframes money-float {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-60px); opacity: 0; }
+}
+
+/* Glitch effect for reality check */
+.glitch {
+  animation: glitch 0.3s steps(2) infinite;
+}
+@keyframes glitch {
+  0%   { clip-path: inset(0 0 80% 0); transform: translateX(-4px); }
+  25%  { clip-path: inset(40% 0 40% 0); transform: translateX(4px); }
+  50%  { clip-path: inset(80% 0 0 0); transform: translateX(-2px); }
+  75%  { clip-path: inset(20% 0 60% 0); transform: translateX(2px); }
+  100% { clip-path: inset(0); transform: translateX(0); }
+}
+
+/* Scanlines overlay on error screen */
+.scanlines {
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.05) 2px,
+    rgba(0,0,0,0.05) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+  display: none;
+}
+.scanlines.show { display: block; }
